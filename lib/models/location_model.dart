@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
+
 class Location {
-  final String id;
+  final String? id; // Made nullable
   final String name;
   final String category;
   final String description;
@@ -10,9 +12,10 @@ class Location {
   final List<String> features;
   final String voiceoverText;
   final bool isAvailable;
+  final String? userId; // Add userId to link to authenticated user
 
   Location({
-    required this.id,
+    this.id, // Now optional
     required this.name,
     required this.category,
     required this.description,
@@ -23,38 +26,44 @@ class Location {
     required this.features,
     required this.voiceoverText,
     this.isAvailable = true,
+    this.userId, // Make userId optional for creation, but include in model
   });
 
   factory Location.fromJson(Map<String, dynamic> json) {
     return Location(
-      id: json['id'],
+      id: json['id'], // Can be null if not present or for new inserts
       name: json['name'],
       category: json['category'],
       description: json['description'],
-      imagePath: json['imagePath'],
-      videoPath: json['videoPath'],
+      imagePath: json['image_path'],
+      videoPath: json['video_path'],
       latitude: json['latitude'].toDouble(),
       longitude: json['longitude'].toDouble(),
-      features: List<String>.from(json['features']),
-      voiceoverText: json['voiceoverText'],
-      isAvailable: json['isAvailable'] ?? true,
+      features: List<String>.from(json['features'] ?? []), // Handle null features
+      voiceoverText: json['voiceover_text'],
+      isAvailable: json['is_available'] ?? true,
+      userId: json['user_id'], // Read user_id from JSON
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
+    final Map<String, dynamic> jsonMap = {
       'name': name,
       'category': category,
       'description': description,
-      'imagePath': imagePath,
-      'videoPath': videoPath,
+      'image_path': imagePath,
+      'video_path': videoPath,
       'latitude': latitude,
       'longitude': longitude,
       'features': features,
-      'voiceoverText': voiceoverText,
-      'isAvailable': isAvailable,
+      'voiceover_text': voiceoverText,
+      'is_available': isAvailable,
+      'user_id': userId, // Include user_id in JSON for insertion/update
     };
+    if (id != null) { // Only include id if it's not null (for updates)
+      jsonMap['id'] = id;
+    }
+    return jsonMap;
   }
 }
 
@@ -89,21 +98,33 @@ extension LocationCategoryExtension on LocationCategory {
   }
 
   String get iconPath {
+    // Changed to return placeholder URLs for icons
+    // You will replace these with actual Supabase Storage URLs later
     switch (this) {
       case LocationCategory.academicBlock:
-        return 'assets/icons/academic.png';
+        return 'https://via.placeholder.com/50/academic_icon.png?text=Academic';
       case LocationCategory.hostel:
-        return 'assets/icons/hostel.png';
+        return 'https://via.placeholder.com/50/hostel_icon.png?text=Hostel';
       case LocationCategory.cafeteria:
-        return 'assets/icons/cafeteria.png';
+        return 'https://via.placeholder.com/50/cafeteria_icon.png?text=Cafeteria';
       case LocationCategory.library:
-        return 'assets/icons/library.png';
+        return 'https://via.placeholder.com/50/library_icon.png?text=Library';
       case LocationCategory.lab:
-        return 'assets/icons/lab.png';
+        return 'https://via.placeholder.com/50/lab_icon.png?text=Lab';
       case LocationCategory.sportsGround:
-        return 'assets/icons/sports.png';
+        return 'https://via.placeholder.com/50/sports_icon.png?text=Sports';
       case LocationCategory.other:
-        return 'assets/icons/other.png';
+        return 'https://via.placeholder.com/50/other_icon.png?text=Other';
     }
+  }
+
+  // ADDED THIS STATIC METHOD
+  static LocationCategory? fromDisplayName(String displayName) {
+    for (var category in LocationCategory.values) {
+      if (category.displayName == displayName) {
+        return category;
+      }
+    }
+    return null; // Return null if no matching display name is found
   }
 }

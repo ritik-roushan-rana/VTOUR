@@ -10,6 +10,8 @@ class AppTheme {
   static const Color textPrimary = Color(0xFF212121);
   static const Color textSecondary = Color(0xFF757575);
 
+  static var borderColor;
+
   static ThemeData get lightTheme {
     return ThemeData(
       primarySwatch: Colors.green,

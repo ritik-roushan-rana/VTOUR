@@ -1,17 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:provider/provider.dart'; // Added for AuthService and LocationProvider
+import 'package:supabase_flutter/supabase_flutter.dart'; // Added for AuthException and Supabase client
 import '../utils/app_theme.dart';
 import '../data/mock_data.dart';
 import '../widgets/featured_location_card.dart';
 import 'location_detail_screen.dart';
+import '../providers/location_provider.dart'; // Added
+import '../services/auth_service.dart'; // Added
+import '../models/location_model.dart'; // Added for LocationCategory and Location
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch locations when the screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<LocationProvider>(context, listen: false).fetchLocations();
+    });
+  }
+
+  // Method to add a sample location (re-added from previous context)
+  Future<void> _addSampleLocation() async {
+    final newLocation = Location(
+      name: 'New Academic Block',
+      category: LocationCategory.academicBlock.displayName, // Use displayName
+      description: 'A newly constructed academic building with modern classrooms.',
+      imagePath: 'https://example.com/images/new_academic.jpg',
+      videoPath: 'https://example.com/videos/new_academic_tour.mp4',
+      latitude: 34.0522 + 0.01,
+      longitude: -118.2437 + 0.01,
+      features: ['Smart Boards', 'Auditorium', 'Research Labs'],
+      voiceoverText: 'Explore the state-of-the-art new academic block.',
+      isAvailable: true,
+      userId: Supabase.instance.client.auth.currentUser?.id, // Assign current user's ID
+    );
+    try {
+      await Provider.of<LocationProvider>(context, listen: false).addLocation(newLocation);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sample location added!')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to add sample location: $e')),
+      );
+    }
+  }
+
+  // Method to handle user sign out
+  Future<void> _signOut() async {
+    try {
+      await Provider.of<AuthService>(context, listen: false).signOut();
+      // Navigation handled by main.dart's auth listener
+    } on AuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sign out failed: ${e.message}')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An unexpected error occurred during sign out: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
+      // Removed AppBar to match the screenshot's custom header
       body: SingleChildScrollView(
         physics: const ClampingScrollPhysics(),
         child: Column(
@@ -35,6 +98,7 @@ class HomeScreen extends StatelessWidget {
     final double statusBarHeight = MediaQuery.of(context).padding.top;
     const double baseHeaderContentHeight = 300;
     final double totalHeaderHeight = baseHeaderContentHeight + statusBarHeight;
+
     return Container(
       height: totalHeaderHeight,
       decoration: BoxDecoration(
@@ -311,30 +375,12 @@ class HomeScreen extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.asset(
-                    'assets/images/campus_overview.jpg',
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          gradient: LinearGradient(
-                            colors: [AppTheme.secondaryColor, AppTheme.primaryColor],
-                          ),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.school_rounded,
-                            size: 60,
-                            color: Colors.white,
-                          ),
-                        ),
-                      );
-                    },
+                // Directly use the Icon widget to match the screenshot
+                const Center(
+                  child: Icon(
+                    Icons.school_rounded,
+                    size: 60, // Adjust size as needed to match screenshot
+                    color: Colors.white,
                   ),
                 ),
                 Container(
@@ -438,6 +484,7 @@ class HomeScreen extends StatelessWidget {
         'gradient': [const Color(0xFF9FA8DA), const Color(0xFF5C6BC0)],
       },
     ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -625,10 +672,7 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withOpacity(0.2),
-          width: 1,
-        ),
+        border: Border.all(color: color.withOpacity(0.2), width: 1),
         boxShadow: [
           BoxShadow(
             color: color.withOpacity(0.1),
@@ -760,6 +804,7 @@ class HomeScreen extends StatelessWidget {
         'color': AppTheme.secondaryColor,
       },
     ];
+
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 30, 20, 0),
       child: Column(
@@ -792,9 +837,7 @@ class HomeScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppTheme.surfaceColor,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: (event['color'] as Color).withOpacity(0.2),
-                  ),
+                  border: Border.all(color: (event['color'] as Color).withOpacity(0.2)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.05),
@@ -1023,14 +1066,17 @@ class HeaderPatternPainter extends CustomPainter {
     final paint = Paint()
       ..color = Colors.white.withOpacity(0.1)
       ..style = PaintingStyle.fill;
+
     for (int i = 0; i < 20; i++) {
       final x = (i * 50.0) % size.width;
       final y = (i * 30.0) % size.height;
       canvas.drawCircle(Offset(x, y), 2, paint);
     }
+
     final linePaint = Paint()
       ..color = Colors.white.withOpacity(0.05)
       ..strokeWidth = 1;
+
     for (int i = 0; i < 10; i++) {
       canvas.drawLine(
         Offset(0, i * 30.0),

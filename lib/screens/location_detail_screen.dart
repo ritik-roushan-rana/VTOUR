@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart'; // Import CachedNetworkImage
 import '../models/location_model.dart';
 import '../utils/app_theme.dart';
 import '../widgets/feature_chip.dart';
@@ -58,10 +59,15 @@ class _LocationDetailScreenState extends State<LocationDetailScreen> {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset(
-              widget.location.imagePath,
+            // CORRECTED: Use CachedNetworkImage for the background image
+            CachedNetworkImage(
+              imageUrl: widget.location.imagePath,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
+              placeholder: (context, url) => Container(
+                color: Colors.grey[200],
+                child: const Center(child: CircularProgressIndicator()),
+              ),
+              errorWidget: (context, url, error) {
                 return Container(
                   color: AppTheme.primaryColor,
                   child: const Icon(
@@ -317,7 +323,6 @@ class _LocationDetailScreenState extends State<LocationDetailScreen> {
     setState(() {
       _isPlaying = !_isPlaying;
     });
-
     // Simulate audio playback
     if (_isPlaying) {
       Future.delayed(const Duration(seconds: 3), () {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart'; // Import CachedNetworkImage
 import '../models/location_model.dart';
 import '../utils/app_theme.dart';
 
@@ -39,8 +40,11 @@ class _CampusMapWidgetState extends State<CampusMapWidget> {
           height: double.infinity,
           decoration: BoxDecoration(
             color: Colors.green[50],
-            image: const DecorationImage(
-              image: AssetImage('assets/images/campus_map_bg.jpg'),
+            // CORRECTED: Use CachedNetworkImage for the background image
+            image: DecorationImage(
+              image: CachedNetworkImageProvider(
+                'https://via.placeholder.com/1200x800/campus_map.jpg?text=Campus+Map', // Placeholder URL for the map
+              ),
               fit: BoxFit.cover,
               opacity: 0.3,
             ),
@@ -114,7 +118,6 @@ class _CampusMapWidgetState extends State<CampusMapWidget> {
       {'name': 'Lab', 'color': Colors.green, 'icon': Icons.science},
       {'name': 'Sports', 'color': Colors.teal, 'icon': Icons.sports_soccer},
     ];
-
     return Positioned(
       top: 20,
       right: 20,
@@ -144,26 +147,26 @@ class _CampusMapWidgetState extends State<CampusMapWidget> {
             ),
             const SizedBox(height: 8),
             ...categories.map((category) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: category['color'] as Color,
-                      shape: BoxShape.circle,
-                    ),
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: category['color'] as Color,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        category['name'] as String,
+                        style: const TextStyle(fontSize: 10),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 6),
-                  Text(
-                    category['name'] as String,
-                    style: const TextStyle(fontSize: 10),
-                  ),
-                ],
-              ),
-            )),
+                )),
           ],
         ),
       ),
@@ -215,44 +218,37 @@ class CampusMapPainter extends CustomPainter {
     final paint = Paint()
       ..color = Colors.green.withOpacity(0.2)
       ..style = PaintingStyle.fill;
-
     // Draw campus roads
     final roadPaint = Paint()
       ..color = Colors.grey[300]!
       ..style = PaintingStyle.stroke
       ..strokeWidth = 8;
-
     // Main road
     canvas.drawLine(
       Offset(0, size.height * 0.5),
       Offset(size.width, size.height * 0.5),
       roadPaint,
     );
-
     // Cross roads
     canvas.drawLine(
       Offset(size.width * 0.3, 0),
       Offset(size.width * 0.3, size.height),
       roadPaint,
     );
-
     canvas.drawLine(
       Offset(size.width * 0.7, 0),
       Offset(size.width * 0.7, size.height),
       roadPaint,
     );
-
     // Draw green areas (parks/gardens)
     final greenPaint = Paint()
       ..color = Colors.green.withOpacity(0.3)
       ..style = PaintingStyle.fill;
-
     canvas.drawCircle(
       Offset(size.width * 0.2, size.height * 0.3),
       50,
       greenPaint,
     );
-
     canvas.drawCircle(
       Offset(size.width * 0.8, size.height * 0.7),
       60,

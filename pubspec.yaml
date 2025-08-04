@@ -16,6 +16,10 @@ dependencies:
   flutter_svg: ^2.0.7
   cached_network_image: ^3.3.0
   flutter_staggered_animations: ^1.1.1
+  supabase_flutter: ^2.5.0
+  app_links: ^3.5.0
+  image_picker: ^1.1.2 # Use the latest version
+  
 
 dev_dependencies:
   flutter_test:
@@ -24,9 +28,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  
   assets:
-    - assets/images/
+    - assets/images/ # Add this line back
     - assets/icons/
     - assets/animations/
     - assets/data/

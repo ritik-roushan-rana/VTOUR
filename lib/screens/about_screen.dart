@@ -1,32 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'; // Import Provider
 import '../utils/app_theme.dart';
+import '../services/auth_service.dart'; // Adjust path if different
+import '../screens/login_screen.dart'; // Adjust path if different
 
-class AboutScreen extends StatelessWidget {
+class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('About VTour'),
-        backgroundColor: AppTheme.primaryColor,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildAppInfo(),
-            const SizedBox(height: 30),
-            _buildFeaturesList(),
-            const SizedBox(height: 30),
-            _buildContactInfo(),
-            const SizedBox(height: 30),
-            _buildVersionInfo(),
-          ],
-        ),
-      ),
-    );
+  State<AboutScreen> createState() => _AboutScreenState();
+}
+
+class _AboutScreenState extends State<AboutScreen> {
+  Future<void> _signOut() async {
+    try {
+      await Provider.of<AuthService>(context, listen: false).signOut();
+      if (mounted) {
+        // Navigate to login page after successful sign out
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          (route) => false, // Remove all previous routes
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign out failed: $e')),
+        );
+      }
+    }
   }
 
   Widget _buildAppInfo() {
@@ -114,7 +116,6 @@ class AboutScreen extends StatelessWidget {
         'description': 'Designed for seamless mobile experience',
       },
     ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -128,10 +129,10 @@ class AboutScreen extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         ...features.map((feature) => _buildFeatureItem(
-          feature['icon'] as IconData,
-          feature['title'] as String,
-          feature['description'] as String,
-        )),
+              feature['icon'] as IconData,
+              feature['title'] as String,
+              feature['description'] as String,
+            )),
       ],
     );
   }
@@ -201,26 +202,10 @@ class AboutScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _buildContactItem(
-              Icons.email,
-              'Email',
-              'support@vtour.edu',
-            ),
-            _buildContactItem(
-              Icons.phone,
-              'Phone',
-              '+1 (555) 123-4567',
-            ),
-            _buildContactItem(
-              Icons.web,
-              'Website',
-              'www.vtour.edu',
-            ),
-            _buildContactItem(
-              Icons.location_on,
-              'Address',
-              'University Campus, Education City',
-            ),
+            _buildContactItem(Icons.email, 'Email', 'support@vtour.edu'),
+            _buildContactItem(Icons.phone, 'Phone', '+1 (555) 123-4567'),
+            _buildContactItem(Icons.web, 'Website', 'www.vtour.edu'),
+            _buildContactItem(Icons.location_on, 'Address', 'University Campus, Education City'),
           ],
         ),
       ),
@@ -312,6 +297,51 @@ class AboutScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSignOutButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
+      child: Center(
+        child: TextButton(
+          onPressed: _signOut,
+          child: const Text(
+            'Sign Out',
+            style: TextStyle(
+              color: Colors.red, // Or AppTheme.accentColor
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('About VTour'),
+        backgroundColor: AppTheme.primaryColor,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildAppInfo(),
+            const SizedBox(height: 30),
+            _buildFeaturesList(),
+            const SizedBox(height: 30),
+            _buildContactInfo(),
+            const SizedBox(height: 30),
+            _buildVersionInfo(),
+            _buildSignOutButton(), // Added the sign-out button here
+          ],
+        ),
       ),
     );
   }

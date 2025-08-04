@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart'; // Import CachedNetworkImage
 import '../models/location_model.dart';
 import '../utils/app_theme.dart';
 
@@ -35,20 +36,35 @@ class LocationCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppTheme.primaryColor.withOpacity(0.1),
                     ),
-                    child: Image.asset(
-                      location.imagePath,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: AppTheme.primaryColor.withOpacity(0.1),
-                          child: const Icon(
-                            Icons.image_not_supported,
-                            size: 32,
-                            color: AppTheme.textSecondary,
+                    // CORRECTED: Use CachedNetworkImage for network paths
+                    child: (location.imagePath.startsWith('http://') || location.imagePath.startsWith('https://'))
+                        ? CachedNetworkImage(
+                            imageUrl: location.imagePath,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: Colors.grey[200],
+                              child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                            ),
+                            errorWidget: (context, url, error) {
+                              // Fallback for network image errors
+                              return Container(
+                                color: AppTheme.primaryColor.withOpacity(0.1),
+                                child: const Icon(
+                                  Icons.broken_image,
+                                  size: 32,
+                                  color: AppTheme.textSecondary,
+                                ),
+                              );
+                            },
+                          )
+                        : Container( // Fallback for non-HTTP paths (e.g., local placeholders)
+                            color: AppTheme.primaryColor.withOpacity(0.1),
+                            child: const Icon(
+                              Icons.image_not_supported,
+                              size: 32,
+                              color: AppTheme.textSecondary,
+                            ),
                           ),
-                        );
-                      },
-                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
