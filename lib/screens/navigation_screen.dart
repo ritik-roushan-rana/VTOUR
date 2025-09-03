@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class NavigationScreen extends StatefulWidget {
   final double destinationLat;
@@ -27,12 +29,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
   Position? currentLocation;
   bool _isNavigating = false;
   MapType _currentMapType = MapType.normal;
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
 
-  // ✅ Correctly access the key from .env
-  final String googleApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+  final String googleApiKey = "AIzaSyA7UGldKuzbklWuRarbpTiobzX3tngqc3c";
 
   String _currentInstruction = "Getting route...";
   double _distanceToNextTurn = 0.0;
@@ -41,21 +43,20 @@ class _NavigationScreenState extends State<NavigationScreen> {
   String _currentStreetName = "Unknown Road";
   String _eta = "Calculating...";
   String _totalDistance = "Calculating...";
-  StreamSubscription<Position>? _positionSubscription;
 
   @override
   void initState() {
     super.initState();
-    _checkLocationServicesAndStartUpdates();
+    _checkLocationServices();
   }
-  
+
   @override
   void dispose() {
-    _positionSubscription?.cancel();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
-  Future<void> _checkLocationServicesAndStartUpdates() async {
+  Future<void> _checkLocationServices() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return;
@@ -73,21 +74,34 @@ class _NavigationScreenState extends State<NavigationScreen> {
       return;
     }
 
-    _positionSubscription = Geolocator.getPositionStream(
+    _getCurrentLocation();
+  }
+
+  void _getCurrentLocation() {
+    // CRITICAL FIX: Get an immediate, single location fix to speed up the process.
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+      .then((position) {
+        currentLocation = position;
+        _updateMarkers(position);
+        _getPolylineAndDirections(); // Trigger initial route fetch
+        setState(() {});
+      }).catchError((e) {
+        // Handle error if initial location can't be fetched
+        print('Error getting initial location: $e');
+      });
+
+    // Continue to listen for real-time updates
+    Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
         distanceFilter: 10,
       ),
-    ).listen((Position position) {
+    ).listen((Position position) async {
       currentLocation = position;
-      _updateMapAndUI(position);
-    });
-  }
+      _updateMarkers(position);
 
-  void _updateMapAndUI(Position position) async {
-    if (_controller.isCompleted) {
-      final GoogleMapController controller = await _controller.future;
       if (_isNavigating) {
+        final GoogleMapController controller = await _controller.future;
         controller.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
@@ -100,22 +114,25 @@ class _NavigationScreenState extends State<NavigationScreen> {
         );
         _updateNavigationUI(position);
       }
-    }
-    _updateMarkers(position);
-    setState(() {});
+      
+      setState(() {});
+    });
   }
 
   void _updateMarkers(Position newLoc) {
     _markers.clear();
     
-    _markers.add(
-      Marker(
-        markerId: const MarkerId("currentLocation"),
-        position: LatLng(newLoc.latitude, newLoc.longitude),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-        infoWindow: const InfoWindow(title: "You are here"),
-      ),
-    );
+    if (!_isNavigating) {
+      _markers.add(
+        Marker(
+          markerId: const MarkerId("currentLocation"),
+          position: LatLng(newLoc.latitude, newLoc.longitude),
+          anchor: const Offset(0.5, 0.5),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+          infoWindow: const InfoWindow(title: "You are here"),
+        ),
+      );
+    }
     
     _markers.add(
       Marker(
@@ -158,10 +175,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   Future<void> _getPolylineAndDirections() async {
-    if (currentLocation == null) {
-      print("Current location is null. Cannot fetch directions.");
-      return;
-    }
+    if (currentLocation == null) return;
 
     final uri = Uri.https(
       'maps.googleapis.com',
@@ -215,17 +229,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
       setState(() {
         _currentInstruction = "You have arrived!";
         _distanceToNextTurn = 0;
-        _isNavigating = false;
-        _polylines.clear();
-        _updateMarkers(newLoc);
       });
+      _playArrivedSound();
       return;
     }
 
     final currentStep = _steps[_currentStepIndex];
     final nextTurnLatLng = LatLng(
-      currentStep['end_location']['lat'] ?? 0.0,
-      currentStep['end_location']['lng'] ?? 0.0,
+      currentStep['end_location']['lat'] ?? 0,
+      currentStep['end_location']['lng'] ?? 0,
     );
     double distance = Geolocator.distanceBetween(
       newLoc.latitude,
@@ -233,22 +245,30 @@ class _NavigationScreenState extends State<NavigationScreen> {
       nextTurnLatLng.latitude,
       nextTurnLatLng.longitude,
     );
-    
-    if (distance < 20 && _currentStepIndex + 1 < _steps.length) {
-      _currentStepIndex++;
-      _updateNavigationUI(newLoc);
-      return;
-    }
 
     setState(() {
       _distanceToNextTurn = distance;
       String instruction = currentStep['html_instructions'].toString() ?? '';
       _currentInstruction = instruction.replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), '');
-      
-      final regex = RegExp(r'onto (.*?)(?:<|$)');
+      final regex = RegExp(r'onto (.*?)(?:<)');
       final match = regex.firstMatch(instruction);
-      _currentStreetName = match?.group(1)?.trim() ?? "Unnamed Road";
+      _currentStreetName = match?.group(1) ?? "Unnamed Road";
     });
+
+    if (distance < 30 && _currentStepIndex + 1 < _steps.length) {
+      _currentStepIndex++;
+      _updateNavigationUI(newLoc);
+    } else if (distance < 30 && _currentStepIndex + 1 == _steps.length) {
+      setState(() {
+        _currentInstruction = "You have arrived at your destination!";
+        _distanceToNextTurn = 0;
+        _isNavigating = false;
+      });
+    }
+  }
+
+  Future<void> _playArrivedSound() async {
+    await _audioPlayer.play(AssetSource('audio/arrived.mp3'));
   }
 
   String _formatDuration(int seconds) {
@@ -261,7 +281,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   IconData _getTurnIcon(String? maneuver) {
-    if (maneuver == null) return Icons.navigation;
+    if (maneuver == null) {
+      return Icons.navigation;
+    }
     switch (maneuver) {
       case 'turn-right':
       case 'fork-right':
@@ -289,11 +311,34 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
     if (_isNavigating) {
       _currentStepIndex = 0;
+      if (currentLocation != null) {
+        final GoogleMapController controller = await _controller.future;
+        controller.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(currentLocation!.latitude, currentLocation!.longitude),
+              zoom: 18,
+              tilt: 60,
+              bearing: currentLocation!.heading,
+            ),
+          ),
+        );
+      }
       await _getPolylineAndDirections();
     } else {
-      setState(() {
-        _polylines.clear();
-      });
+      if (currentLocation != null) {
+        final GoogleMapController controller = await _controller.future;
+        controller.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(currentLocation!.latitude, currentLocation!.longitude),
+              zoom: 15,
+              tilt: 0,
+              bearing: 0,
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -341,6 +386,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   onMapCreated: (GoogleMapController controller) {
                     if (!_controller.isCompleted) _controller.complete(controller);
                   },
+                  padding: EdgeInsets.only(
+                    top: _isNavigating ? 150 : 0,
+                    bottom: _isNavigating ? 150 : 0,
+                  ),
                 ),
 
                 if (_isNavigating)
@@ -400,7 +449,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                       ),
                     ),
                   ),
-                
+
                 if (_isNavigating)
                   Positioned(
                     bottom: 20,
