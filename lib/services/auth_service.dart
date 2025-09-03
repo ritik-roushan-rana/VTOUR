@@ -81,7 +81,6 @@ class AuthService {
     }
   }
 
-  // ✅ Updated method to handle password reset
   Future<void> resetPasswordForEmail(String email) async {
     try {
       await _supabaseClient.auth.resetPasswordForEmail(
