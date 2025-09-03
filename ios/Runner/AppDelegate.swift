@@ -1,4 +1,3 @@
-// AppDelegate.swift
 import UIKit
 import Flutter
 import GoogleMaps
@@ -9,6 +8,7 @@ import GoogleMaps
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    // This is the correct way to load the API key from Info.plist
     if let key = Bundle.main.object(forInfoDictionaryKey: "GMSServicesAPIKey") as? String {
         GMSServices.provideAPIKey(key)
     }

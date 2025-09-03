@@ -7,12 +7,13 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:math';
 
-class NavigationMapWidget extends StatefulWidget {
-  final String googleMapsApiKey;
+// You will need to import the file that contains the global googleMapsApiKey
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+// The global key is now used directly, so we can remove the constructor parameter.
+class NavigationMapWidget extends StatefulWidget {
   const NavigationMapWidget({
     Key? key,
-    required this.googleMapsApiKey,
   }) : super(key: key);
 
   @override
@@ -140,7 +141,7 @@ class _NavigationMapWidgetState extends State<NavigationMapWidget> {
     setState(() => _isLoading = true);
 
     try {
-      List<geocoding.Location> locations = await geocoding.locationFromAddress(query);
+      List<geocoding.Location> locations = await geocoding.locationFromAddress(query, localeIdentifier: 'en');
       if (locations.isNotEmpty) {
         geocoding.Location location = locations.first;
         LatLng searchedLatLng = LatLng(location.latitude, location.longitude);
@@ -222,7 +223,7 @@ class _NavigationMapWidgetState extends State<NavigationMapWidget> {
       final String url = 'https://maps.googleapis.com/maps/api/directions/json?'
           'origin=${_currentPosition!.latitude},${_currentPosition!.longitude}&'
           'destination=${_searchedLocation!.latitude},${_searchedLocation!.longitude}&'
-          'key=${widget.googleMapsApiKey}';
+          'key=${dotenv.env['GOOGLE_MAPS_API_KEY']!}';
 
       final response = await http.get(Uri.parse(url));
       final data = json.decode(response.body);

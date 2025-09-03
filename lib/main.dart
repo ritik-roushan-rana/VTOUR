@@ -1,5 +1,3 @@
-// main.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -13,9 +11,15 @@ import 'screens/main_navigation.dart';
 import 'screens/WelcomeScreen.dart';
 import 'utils/app_theme.dart';
 
+// Declare a late global variable to hold the API key
+late final String googleMapsApiKey;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+
+  // Initialize the global variable with the key from .env
+  googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
 
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,

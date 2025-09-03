@@ -31,7 +31,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
 
-  final String googleApiKey = dotenv.env['googleApiKey']!;
+  // ✅ Correctly access the key from .env
+  final String googleApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
 
   String _currentInstruction = "Getting route...";
   double _distanceToNextTurn = 0.0;
