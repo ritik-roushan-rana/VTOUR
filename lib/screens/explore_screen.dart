@@ -72,7 +72,7 @@ class _ExploreScreenState extends State<ExploreScreen>
 
   Widget _buildSearchSection() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: Colors.white,
       child: Consumer<LocationProvider>(
         builder: (context, locationProvider, child) {

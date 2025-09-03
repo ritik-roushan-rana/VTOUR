@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart'; // Import Cache
 import '../models/location_model.dart';
 import '../utils/app_theme.dart';
 import '../widgets/feature_chip.dart';
+import 'navigation_screen.dart'; // ✅ Added import
 
 class LocationDetailScreen extends StatefulWidget {
   final Location location;
@@ -54,6 +55,7 @@ class _LocationDetailScreenState extends State<LocationDetailScreen> {
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
+            fontSize: 15
           ),
         ),
         background: Stack(
@@ -354,19 +356,15 @@ class _LocationDetailScreenState extends State<LocationDetailScreen> {
   }
 
   void _navigate() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Navigation'),
-        content: Text(
-          'Opening navigation to ${widget.location.name}. This will guide you through the campus.',
+    // ✅ Updated to push NavigationScreen instead of simple dialog
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NavigationScreen(
+          destinationLat: widget.location.latitude,
+          destinationLng: widget.location.longitude,
+          destinationName: widget.location.name,
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
       ),
     );
   }
