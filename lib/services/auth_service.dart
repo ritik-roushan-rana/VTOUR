@@ -86,7 +86,7 @@ class AuthService {
     try {
       await _supabaseClient.auth.resetPasswordForEmail(
         email,
-        redirectTo: 'https://ritik-roushan-rana.github.io/vtour-password-reset/reset-password.html',
+        redirectTo: 'https://ritik-roushan-rana.github.io/vtour-password-reset/',
       );
     } on supabase.AuthException catch (e) {
       throw Exception(e.message);
