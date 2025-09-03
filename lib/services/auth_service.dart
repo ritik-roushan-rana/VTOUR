@@ -80,19 +80,6 @@ class AuthService {
       throw Exception('An unexpected error occurred during Google sign-in.');
     }
   }
-
-  Future<void> resetPasswordForEmail(String email) async {
-    try {
-      await _supabaseClient.auth.resetPasswordForEmail(
-        email,
-        redirectTo: 'https://ritik-roushan-rana.github.io/vtour-password-reset/',
-      );
-    } on supabase.AuthException catch (e) {
-      throw Exception(e.message);
-    } catch (e) {
-      throw Exception('An unexpected error occurred during password reset: $e');
-    }
-  }
   
   Future<void> signOut() async {
     try {
