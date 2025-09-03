@@ -1,4 +1,4 @@
-# vtour
+# VTour
 
 A new Flutter project.
 
