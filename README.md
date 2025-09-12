@@ -12,7 +12,7 @@
 [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white)](https://supabase.com/)
 [![AR Ready](https://img.shields.io/badge/AR-Ready-ff6b6b?style=flat&logo=google&logoColor=white)](https://developers.google.com/ar)
 
-[🚀 Demo](#demo) • [✨ Features](#features) • [📱 Screenshots](#screenshots) • [🛠️ Installation](#installation) • [🤝 Contributing](#contributing)
+[🚀 Demo](#demo) • [✨ Features](#features) • [📱 Screenshots](#screenshots) • [🛠️ Installation](#installation) 
 
 </div>
 
