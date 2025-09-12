@@ -88,28 +88,46 @@ VTour is a cutting-edge virtual campus guide built with Flutter, designed to rev
 
 ```text
 VTOUR/
-├── .dart_tool/          # Dart build tools
-├── .idea/               # IDE configuration
-├── .vscode/             # VS Code settings
-├── android/             # Android platform files
-├── assets/              # App assets
-│   ├── animations/      # Animation files
-│   ├── audio/          # Audio files
-│   ├── data/           # Static data files
-│   ├── icons/          # App icons
-│   ├── images/         # Image assets
-│   └── models/         # 3D models
-├── build/              # Build output
-├── ios/                # iOS platform files
-├── lib/                # Main Dart code
-├── linux/              # Linux platform files
-├── macos/              # macOS platform files
-├── test/               # Test files
-├── web/                # Web platform files
-├── windows/            # Windows platform files
-├── .env                # Environment variables
-├── pubspec.yaml        # Flutter dependencies
-└── README.md           # This file
+├── lib/
+│   ├── screens/
+│   │   ├── about_screen.dart
+│   │   ├── ar_view_screen.dart
+│   │   ├── custom_search_delegate.dart
+│   │   ├── explore_screen.dart
+│   │   ├── home_screen.dart
+│   │   ├── hostel_explore_screen.dart
+│   │   ├── hostel_room_type_screen.dart
+│   │   ├── hostel_room_walkthrough_screen.dart
+│   │   ├── location_detail_screen.dart
+│   │   ├── login_screen.dart
+│   │   ├── main_navigation.dart
+│   │   ├── navigation_screen.dart
+│   │   ├── photo_view_screen.dart
+│   │   ├── signup_screen.dart
+│   │   ├── splash_screen.dart
+│   │   ├── tour_screen.dart
+│   │   └── welcome_screen.dart
+│   ├── services/
+│   │   ├── auth_service.dart
+│   │   ├── geocoding_service.dart
+│   │   ├── hostel_service.dart
+│   │   └── location_service.dart
+│   ├── utils/
+│   │   ├── app_theme.dart
+│   │   ├── isolate_helper.dart
+│   │   └── main.dart
+│   └── widgets/
+│       ├── campus_map_widget.dart
+│       ├── enhanced_campus_map_widget.dart
+│       ├── feature_chip.dart
+│       ├── featured_location_card.dart
+│       ├── home_screen_widgets.dart
+│       ├── location_card.dart
+│       ├── location_grid_item.dart
+│       ├── navigation_map_widget.dart
+│       ├── quick_action_card.dart
+│       └── search_bar_widget.dart
+└── README.md
 ```
 
 ## 🚀 Getting Started
