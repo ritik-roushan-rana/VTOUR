@@ -20,6 +20,16 @@ migrate_working_dir/
 *.iws
 .idea/
 
+# Flutter .gitignore example
+build/
+.DS_Store
+*.iml
+*.lock
+.idea/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
