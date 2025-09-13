@@ -4,6 +4,12 @@
 
 **A Comprehensive Virtual Campus Guide**
 
+## 🚀 Install VTour iOS App
+
+You can install the latest **VTour** iOS build directly via Apps on Air:
+
+[Install on iPhone](https://app.appsonair.com/install/b8Fip9ir)
+
 *Explore university campuses from anywhere with immersive virtual tours and AR experiences*
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE.md)
