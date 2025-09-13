@@ -170,7 +170,7 @@ Now you should see the **AltStore app** on your home screen.
 ---
 
 ### 2. Get the `.ipa` file
-- Download the latest release from [Releases](./releases) or the link I provide.
+- Download the latest release from ➡️ [Download VTour iOS v1.0.0 (.ipa)](https://github.com/ritik-roushan-rana/VTOUR/releases/download/v1.0.0/VTour.ipa) or the link I provide.
 - Save it to your iPhone (via AirDrop, iCloud Drive, or email → Files app).
 
 ---
