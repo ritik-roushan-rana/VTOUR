@@ -7,7 +7,6 @@ import '../models/hostel_room_model.dart';
 import  '../services/hostel_service.dart'; // This line was added
 import '../widgets/feature_chip.dart';
 import 'navigation_screen.dart';
-import 'ar_view_screen.dart';
 import 'hostel_room_walkthrough_screen.dart';
 import 'photo_view_screen.dart';
 
@@ -374,20 +373,6 @@ class _HostelRoomTypeScreenState extends State<HostelRoomTypeScreen> {
                 ),
               ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: _showARMode,
-                icon: const Icon(Icons.view_in_ar),
-                label: const Text("AR View"),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppTheme.primaryColor,
-                  side: const BorderSide(color: AppTheme.primaryColor),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-              ),
-            ),
           ],
         ),
       ],
@@ -424,15 +409,6 @@ class _HostelRoomTypeScreenState extends State<HostelRoomTypeScreen> {
           destinationLat: widget.hostel.latitude,
           destinationLng: widget.hostel.longitude,
         ),
-      ),
-    );
-  }
-
-  void _showARMode() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ARViewScreen(location: widget.hostel),
       ),
     );
   }

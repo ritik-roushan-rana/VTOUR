@@ -720,7 +720,6 @@ class _HomeScreenState extends State<HomeScreen> {
         case 'map':
           tabController.animateTo(2);
           break;
-        case 'ar':
         case 'search':
         case 'favorites':
         case 'events':

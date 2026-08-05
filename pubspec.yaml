@@ -32,7 +32,6 @@ dependencies:
   uni_links: ^0.5.1
   shared_preferences: ^2.0.15
   permission_handler: ^11.3.1
-  model_viewer_plus: ^1.7.0
   path: ^1.9.1
   panorama: ^0.4.1
 
@@ -50,5 +49,4 @@ flutter:
     - assets/animations/
     - assets/data/
     - assets/audio/
-    - assets/models/
     - .env

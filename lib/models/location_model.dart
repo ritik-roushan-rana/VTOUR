@@ -16,7 +16,6 @@ class Location {
   final String voiceoverText;
   final bool isAvailable;
   final String? userId;
-  final String? arModelPath;
   final List<HostelRoom>? hostelRooms;
   final String? genderType; // Changed to String
 
@@ -33,7 +32,6 @@ class Location {
     required this.voiceoverText,
     this.isAvailable = true,
     this.userId,
-    this.arModelPath,
     this.hostelRooms,
     this.genderType, // Changed to String
   });
@@ -52,7 +50,6 @@ class Location {
       voiceoverText: json['voiceover_text'],
       isAvailable: json['is_available'] ?? true,
       userId: json['user_id'],
-      arModelPath: json['ar_model_path'],
       genderType: json['gender_type'], // Directly assign string
     );
   }
@@ -70,7 +67,6 @@ class Location {
       'voiceover_text': voiceoverText,
       'is_available': isAvailable,
       'user_id': userId,
-      'ar_model_path': arModelPath,
     };
     if (id != null) {
       jsonMap['id'] = id;

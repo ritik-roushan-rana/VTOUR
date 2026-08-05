@@ -10,13 +10,12 @@ You can install the latest **VTour** iOS build directly via Apps on Air:
 
 [Install on iPhone](https://app.appsonair.com/install/b8Fip9ir)
 
-*Explore university campuses from anywhere with immersive virtual tours and AR experiences*
+*Explore university campuses from anywhere with immersive 360° virtual tours*
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE.md)
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=flat&logo=flutter&logoColor=white)](https://flutter.dev/)
 [![Dart](https://img.shields.io/badge/Dart-0175C2?style=flat&logo=dart&logoColor=white)](https://dart.dev/)
 [![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white)](https://supabase.com/)
-[![AR Ready](https://img.shields.io/badge/AR-Ready-ff6b6b?style=flat&logo=google&logoColor=white)](https://developers.google.com/ar)
 
 [🚀 Demo](#demo) • [✨ Features](#features) • [📱 Screenshots](#screenshots) • [🛠️ Installation](#installation) 
 
@@ -32,7 +31,7 @@ VTour is a cutting-edge virtual campus guide built with Flutter, designed to rev
 
 ### 🌟 **Why Choose VTour?**
 
-*Experience campus life like never before with our innovative blend of virtual reality, augmented reality, and interactive features*
+*Experience campus life like never before with 360° tours, smart maps, and audio guides*
 
 </div>
 
@@ -40,9 +39,9 @@ VTour is a cutting-edge virtual campus guide built with Flutter, designed to rev
 
 <div align="center">
 
-| 🗺️ **Virtual Tours** | 🔍 **Augmented Reality** | 🏠 **Hostel Guide** |
+| 🗺️ **Virtual Tours** | 🧭 **Campus Navigation** | 🏠 **Hostel Guide** |
 |:---:|:---:|:---:|
-| Explore **37+ locations** with immersive 360° tours | Interactive AR navigation and real-time discovery | Complete hostel information with photos & amenities |
+| Explore **37+ locations** with immersive 360° tours | Turn-by-turn routing to any campus location | Complete hostel information with photos & amenities |
 
 | 🗺️ **Smart Maps** | 🎵 **Audio Guides** | 🔐 **Secure Access** |
 |:---:|:---:|:---:|
@@ -97,7 +96,6 @@ VTOUR/
 ├── lib/
 │   ├── screens/
 │   │   ├── about_screen.dart
-│   │   ├── ar_view_screen.dart
 │   │   ├── custom_search_delegate.dart
 │   │   ├── explore_screen.dart
 │   │   ├── home_screen.dart
@@ -143,9 +141,8 @@ VTOUR/
 
 1. **🔐 Authentication** - Create your account or sign in for personalized features
 2. **🗺️ Explore Campus** - Browse through 37+ immersive virtual tour locations
-3. **📱 AR Experience** - Enable AR mode for interactive real-world navigation
-4. **🏠 Hostel Information** - Discover detailed hostel amenities and room types
-5. **🧭 Smart Navigation** - Use interactive maps for efficient campus routing
+3. **🏠 Hostel Information** - Discover detailed hostel amenities and room types
+4. **🧭 Smart Navigation** - Use interactive maps for efficient campus routing
 
 # 📱 Flutter iOS App (Sideload via AltStore)
 

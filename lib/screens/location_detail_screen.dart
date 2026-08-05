@@ -4,7 +4,6 @@ import '../models/location_model.dart';
 import '../utils/app_theme.dart';
 import '../widgets/feature_chip.dart';
 import '../screens/navigation_screen.dart';
-import '../screens/ar_view_screen.dart';
 
 class LocationDetailScreen extends StatefulWidget {
   final Location location;
@@ -300,22 +299,6 @@ class _LocationDetailScreenState extends State<LocationDetailScreen> {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: _showARMode,
-                  icon: const Icon(Icons.view_in_ar),
-                  label: const Text('AR View'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppTheme.primaryColor,
-                    side: const BorderSide(color: AppTheme.primaryColor),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
         ],
@@ -367,16 +350,6 @@ class _LocationDetailScreenState extends State<LocationDetailScreen> {
           destinationLat: widget.location.latitude,
           destinationLng: widget.location.longitude,
         ),
-      ),
-    );
-  }
-
-   void _showARMode() {
-    // CORRECTED: Pass the location object to the ARViewScreen
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ARViewScreen(location: widget.location),
       ),
     );
   }
