@@ -64,13 +64,6 @@ class HomeScreenData {
       'action': 'tour',
     },
     {
-      'title': 'AR Experience',
-      'subtitle': 'Coming Soon',
-      'icon': Icons.view_in_ar_rounded,
-      'gradient': [const Color(0xFFF44336), const Color(0xFFFFEB3B)],
-      'action': 'ar',
-    },
-    {
       'title': 'Campus Map',
       'subtitle': 'Navigate easily',
       'icon': Icons.map_rounded,

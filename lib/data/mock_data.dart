@@ -102,12 +102,6 @@ class MockData {
       'color': const Color(0xFF2E7D32),
     },
     {
-      'title': 'AR Mode',
-      'subtitle': 'Coming Soon',
-      'icon': 'https://via.placeholder.com/50/ar_icon.png?text=AR',
-      'color': const Color(0xFF1976D2),
-    },
-    {
       'title': 'Campus Map',
       'subtitle': 'Interactive map',
       'icon': 'https://via.placeholder.com/50/map_icon.png?text=Map',

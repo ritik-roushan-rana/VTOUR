@@ -101,11 +101,6 @@ class _AboutScreenState extends State<AboutScreen> {
         'description': 'Find any location quickly with our intelligent search',
       },
       {
-        'icon': Icons.view_in_ar,
-        'title': 'AR Experience',
-        'description': 'Augmented reality features coming soon',
-      },
-      {
         'icon': Icons.record_voice_over,
         'title': 'Audio Guides',
         'description': 'Listen to detailed descriptions of each location',
